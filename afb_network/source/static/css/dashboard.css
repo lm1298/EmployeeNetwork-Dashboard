@@ -1,0 +1,160 @@
+.bubble-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* Ensure consistent gap between bubbles */
+}
+
+/* Department Section */
+.department-section {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    /* Space between department sections */
+}
+
+.department-bubble {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    /* Makes the bubble round */
+    color: white;
+    text-align: center;
+    line-height: 100px;
+    /* Center text vertically */
+    margin-right: 20px;
+    /* Space between department bubble and user profiles */
+}
+
+@keyframes bubbleMove {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.bubble,
+.department-bubble {
+    animation: bubbleMove 3s ease-in-out infinite;
+}
+
+.profile-info {
+    margin-top: 10px;
+}
+
+/* Add more department colors here */
+.bubble {
+    padding: 10px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    text-align: center;
+    flex-shrink: 0;
+    gap: 20px;
+}
+
+/* Style for images inside bubbles if using <img> tags */
+.bubble img {
+    width: 100%;
+    /* Make the image cover the bubble */
+    height: 100%;
+    border-radius: 50%;
+    /* Circular image */
+    object-fit: cover;
+    /* Cover the bubble area without stretching */
+}
+.finance {
+    background-color: lightblue;
+}
+/* Department-specific colors */
+.businessoperation {
+    background-color: rgb(0, 145, 255);
+}
+
+.it {
+    background-color: orange;
+}
+.fundraising {
+    background-color: greenyellow;
+}
+
+.hr {
+    background-color: red;
+}
+
+.programs {
+    background-color: yellow;
+}
+
+.multimedia {
+    background-color: #6f42c1;
+}
+
+.communications {
+    background-color: rgba(165, 42, 42, 0.63);
+}
+
+.popup {
+    display: none;
+    position: absolute;
+    top: 0;
+    margin-left: -10%;
+    /* Position to the left of the bubble */
+    background-color: white;
+    color: black;
+    /* Solid white background */
+    border: '10px solid #ccc';
+    /* Add a border for better visibility */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Optional: Add a shadow for better distinction */
+    z-index: 100;
+    /* Ensure it's above other content */
+    padding: 10px;
+    /* Add some padding around the content */
+    transform: translateX(-100%);
+    /* Adjust based on the exact positioning you need */
+    width: 300px;
+    line-height: 1;
+}
+
+.popup-content,
+.popup p,
+.popup .close {
+    /* Targeting popup content and paragraphs specifically */
+    margin: 5px 0;
+    /* Reduce margin for top and bottom */
+    padding: 3px;
+    /* Adjust padding as needed */
+    /* Add or adjust other properties as needed */
+}
+
+.user-popup {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 1000;
+}
+
+.announcement {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+.announcement-text {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.announcement-user {
+    text-align: left;
+    margin-top: 20px;
+}

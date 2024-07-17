@@ -1,0 +1,31 @@
+{% extends 'afb_base.html' %}
+{% load socialaccount %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+  <h3 class="display-4 pt-3">Sign In</h3>
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <p>
+        <label for="id_username">Username:</label>
+        <input class="form-control" type="text" name="username" autofocus="" maxlength="254" required="" id="id_username" placeholder="Username">
+      </p>
+    </div>
+    <div class="form-group">
+      <p>
+        <label for="id_password">Password:</label>
+        <input class="form-control" type="password" name="password" required="" id="id_password" placeholder="Password">
+      </p>
+    </div>
+    <button type="submit" class="btn btn-outline-info px-3">Login</button>
+    <button class="btn btn-outline-info">
+      <a class="px-3" href="{% provider_login_url 'google'%}?next=/">
+          <i class="fab fa-google"></i>
+          Login with Google
+      </a>
+    </button>
+  </form>
+
+{% endblock %}
