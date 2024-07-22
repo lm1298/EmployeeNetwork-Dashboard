@@ -45,4 +45,17 @@ class TimeCard(models.Model):
     end_date = models.DateTimeField()
     total_time = models.DurationField()
 
+class Calendar(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    events = models.ManyToManyField('Event')
+    
+class Event(models.Model):
+    title = models.CharField(max_length=200)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
 

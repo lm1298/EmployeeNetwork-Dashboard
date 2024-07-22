@@ -129,8 +129,7 @@
                                         class="btn btn-primary btn-sm">Talk</a>
                                 </div>
                                 <div class="employee-option">
-                                    <a href="{% url 'calendar_url_name' profile.user.id %}"
-                                        class="btn btn-success btn-sm">Calendar</a>
+                                    <a href="{% url 'user_calendar' user.id %}" class="btn btn-primary">Calendar</a>
                                 </div>
                                 <div class="employee-option">
                                     <a href="{% url 'time_card_url_name' profile.user.id %}"

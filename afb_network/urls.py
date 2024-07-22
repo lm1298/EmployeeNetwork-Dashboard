@@ -11,6 +11,9 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', views.profile_page, name='profile'),
     path('talk/<int:user_id>/', views.talk, name='talk_url_name'),
-    path('calendar/<int:user_id>/', views.calendar, name='calendar_url_name'),
+    path('calendar/<int:user_id>/', views.user_calendar, name='user_calendar'),
     path('time_card/<int:user_id>/', views.time_card, name='time_card_url_name'),
+    path('events/', views.event_list, name='event-list'),
+    path('create-event/', views.create_event, name='create-event'),
+    path('time_card/<int:user_id>/', views.time_card, name='timecard_details'),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

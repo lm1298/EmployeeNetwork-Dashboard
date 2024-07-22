@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
+</head>
+<style>
+    .header, .footer {
+        background-color: #00c3ff; /* Adjusted to match across all pages */
+        height: 60px; /* Standard height */
+        width: 100%; /* Full width */
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 20px; /* Adjust padding as needed */
+        box-sizing: border-box;
+    }
+    /* Ensure additional styles here match those in profile_list.html */
+</style>
+<body>
+    <header class="header">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+        <div class="title">AFB Network</div>
+    </header>
+
+    {% block content %}
+    <!-- Main content that will be overridden in extended templates -->
+    {% endblock %}
+
+    <footer class="footer">
+        <div class="title">A Free Bird</div>
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
+    </footer>
+</body>
+</html>
