@@ -1,0 +1,27 @@
+<!-- timecard_details.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timecard Details</title>
+</head>
+<body>
+    {% for timecard in timecards %}
+    <div>
+        <p>Date: {{ timecard.date }}</p>
+        <p>Hours Worked: {{ timecard.hours_worked }}</p>
+        <p>Minutes Worked: {{ timecard.work_minutes }}</p>
+    <p>Summary: {{ timecard.summary }}</p>
+    <p>Date: {{ timecard.date }}</p>
+        <!-- Add more fields as needed -->
+    </div>
+{% empty %}
+    <p>No timecard entries found.</p>
+{% endfor %}
+    
+</body>
+</html>
+{% endblock %}

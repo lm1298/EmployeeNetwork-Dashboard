@@ -129,11 +129,14 @@
                                         class="btn btn-primary btn-sm">Talk</a>
                                 </div>
                                 <div class="employee-option">
-                                    <a href="{% url 'user_calendar' user.id %}" class="btn btn-primary">Calendar</a>
+                                    <a href="{% url 'user_calendar' profile.user.id %}" class="btn btn-primary">Calendar</a>
                                 </div>
                                 <div class="employee-option">
-                                    <a href="{% url 'time_card_url_name' profile.user.id %}"
-                                        class="btn btn-info btn-sm">Time Card</a>
+                                    {% if user.timecard_set.exists %}
+                                    <a href="{% url 'timecard_details' profile.user.id %}">Timecard</a>
+                                    {% else %}
+                                    <a href="{% url 'timecard_entry' %}">Timecard</a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

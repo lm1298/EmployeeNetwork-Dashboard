@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add hours to your time card</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h2 class="text-center mb-4">Add hours to your time card</h2>
+                <form method="post" class="form-group">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} mt-3">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    <!-- Displaying User-Specific Time Cards -->
+    <div class="container mt-5">
+        <h2>Your Previous Time Cards</h2>
+        <div class="row">
+            {% for timecard in user_timecards %}
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <p><strong>Date:</strong> {{ timecard.date }}</p>
+                        <p><strong>Hours Worked:</strong> {{ timecard.work_hours }}</p>
+                        <p><strong>Description:</strong> {{ timecard.description }}</p>
+                        <a href="{% url 'edit_timecard' timecard.id %}" class="btn btn-secondary">Edit</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No time cards found.</p>
+            {% endfor %}
+        </div>
+    </div>
+    
+    </div>
+</body>
+
+</html>
+{% endblock %}
