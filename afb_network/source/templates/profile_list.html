@@ -104,21 +104,26 @@
                             data-username="{{ profile.user.username }}" data-email="{{ profile.user.email }}"
                             data-startdate="{{ profile.start_date }}" data-enddate="{{ profile.end_date }}">
 
+
                             {% if profile.image %}
                             <img src="{{ profile.image.url }}" alt="Profile Image" class="profile-image">
                             {% else %}
                             <img src="{% static 'images/default.png' %}" alt="Profile Image" class="profile-image">
                             {% endif %}
+                            
 
                         </div>
+
 
                         <div class="user-details-hover bg-white border rounded p-2 mt-2">
                             <p>Start Date: {{ profile.start_date }}</p>
                             <p>End Date: {{ profile.end_date }}</p>
                             <p>Email: {{ profile.user.email }}</p>
+                            
                             <!-- Added options for Talk, Calendar, and Time Card -->
 
                         </div>
+
                         <div class="user-info mt-2">
                             <p class="user-name">{{ profile.user.get_full_name }}, {{ department.name }}</p>
                             <p class="user-email">{{ profile.user.email }}</p>
@@ -129,13 +134,14 @@
                                         class="btn btn-primary btn-sm">Talk</a>
                                 </div>
                                 <div class="employee-option">
-                                    <a href="{% url 'user_calendar' profile.user.id %}" class="btn btn-primary">Calendar</a>
+                                    <a href="{% url 'user_calendar' profile.user.id %}"
+                                        class="btn btn-primary">Calendar</a>
                                 </div>
                                 <div class="employee-option">
                                     {% if user.timecard_set.exists %}
-                                    <a href="{% url 'timecard_details' profile.user.id %}">Timecard</a>
+                                    <a href="{% url 'user_timecard' profile.user.id %}">Timecard</a>
                                     {% else %}
-                                    <a href="{% url 'timecard_entry' %}">Timecard</a>
+                                    <a href="{% url 'timecard_entry'  %}">Timecard</a>
                                     {% endif %}
                                 </div>
                             </div>

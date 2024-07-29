@@ -9,50 +9,106 @@
     <title>Add hours to your time card</title>
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            margin-top: 50px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .alert {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
                 <h2 class="text-center mb-4">Add hours to your time card</h2>
                 <form method="post" class="form-group">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                    {% for field in form %}
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label" for="id_{{ field.name }}">{{ field.label }}</label>
+                        <div class="col-sm-8">
+                            {{ field }}
+                            {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <div class="form-group row">
+                        <div class="col-sm-8 offset-sm-4">
+                            <button type="submit" class="btn btn-primary btn-block">Save</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-    {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} mt-3">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
-    <!-- Displaying User-Specific Time Cards -->
-    <div class="container mt-5">
-        <h2>Your Previous Time Cards</h2>
-        <div class="row">
-            {% for timecard in user_timecards %}
+        {% if messages %}
+        <div class="row mt-3 justify-content-center">
             <div class="col-md-6">
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <p><strong>Date:</strong> {{ timecard.date }}</p>
-                        <p><strong>Hours Worked:</strong> {{ timecard.work_hours }}</p>
-                        <p><strong>Description:</strong> {{ timecard.description }}</p>
-                        <a href="{% url 'edit_timecard' timecard.id %}" class="btn btn-secondary">Edit</a>
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        <!-- Displaying User-Specific Time Cards -->
+        <div class="row mt-5">
+            <div class="col-md-12">
+                <h2 class="text-center">Your Previous Time Cards</h2>
+                <div class="row">
+                    {% for timecard in user_timecards %}
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <p><strong>Date:</strong> {{ timecard.date }}</p>
+                                <p><strong>Hours Worked:</strong> {{ timecard.work_hours }}</p>
+                                <p><strong>Description:</strong> {{ timecard.description }}</p>
+                                <a href="{% url 'edit_timecard' timecard.id %}" class="btn btn-primary">Edit</a>
+                            </div>
+                        </div>
                     </div>
+                    {% empty %}
+                    <div class="col-md-12">
+                        <p class="text-center">No time cards found.</p>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
-            {% empty %}
-            <p>No time cards found.</p>
-            {% endfor %}
         </div>
     </div>
-    
-    </div>
+    <!-- Include Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>

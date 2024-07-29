@@ -60,6 +60,7 @@ class TimeEntry(models.Model):
     work_minutes = models.PositiveIntegerField(default=0)
     summary = models.TextField(max_length=255, blank = True)
     date = models.DateTimeField(default=now)
+    employee = models.ForeignKey(EmployeeProfile, on_delete=models.CASCADE,blank=True, null=True)
     # month = models.SmallIntegerField(default=1)
     # week = models.SmallIntegerField(default=0)
     # converted_to_minutes = models.PositiveIntegerField(default=0)

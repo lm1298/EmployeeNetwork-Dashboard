@@ -18,7 +18,7 @@ class EmployeeProfileForm(forms.ModelForm):
 class TimeCardForm(forms.ModelForm):
     class Meta:
         model = TimeEntry
-        fields = ['date', 'work_hours', 'work_minutes', 'summary']
+        fields = ['date', 'work_hours', 'work_minutes']
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

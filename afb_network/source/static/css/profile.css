@@ -15,7 +15,7 @@ header {
     height: 50px;
 }
 
-header > div.title {
+header>div.title {
     flex-grow: 1;
     text-align: center;
     font-size: 34px;
@@ -83,7 +83,7 @@ section {
 }
 
 #announcement {
-    
+
     padding: 20px;
     margin-top: 40px;
 }
@@ -109,7 +109,7 @@ footer .logo {
     height: 40px;
 }
 
-footer > div.title {
+footer>div.title {
     flex-grow: 1;
     text-align: right;
     font-size: 34px;
@@ -195,7 +195,7 @@ footer {
     text-align: center;
 }
 
-.department-details > :last-child {
+.department-details> :last-child {
     border-bottom: none;
 }
 
@@ -264,7 +264,8 @@ footer {
 }
 
 .employee-option {
-    border: 1px solid #dee2e6; /* Bootstrap's default border color for consistency */
+    border: 1px solid #dee2e6;
+    /* Bootstrap's default border color for consistency */
     padding: 8px;
     text-align: center;
 }
@@ -272,13 +273,28 @@ footer {
 .employee-options-container {
     display: flex;
     justify-content: space-around;
-    border: 1px solid #dee2e6; /* Border to create the box */
-    border-radius: 5px; /* Optional: for rounded corners */
-    margin-top: 10px; /* Space above the options container */
+    border: 1px solid #dee2e6;
+    /* Border to create the box */
+    border-radius: 5px;
+    /* Optional: for rounded corners */
+    margin-top: 10px;
+    /* Space above the options container */
 }
 
 #calendar {
     max-width: 500px;
     margin: 0 auto;
 }
-  
+
+.timecard-popup {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}

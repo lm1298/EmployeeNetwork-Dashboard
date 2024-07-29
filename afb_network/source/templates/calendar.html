@@ -9,12 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Calendar</title>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         #calendar {
             max-width: 900px;
             margin: 60px auto;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .fc-event-title {
@@ -22,6 +27,7 @@
         }
 
         .custom-event {
+            background-color: #007bff;
             padding: 5px;
             border-radius: 5px;
             color: white;
@@ -33,6 +39,8 @@
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            background-color: #f8f9fa;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .event-item {
@@ -43,89 +51,135 @@
         .event-item:last-child {
             border-bottom: none;
         }
+
+        #eventFormContainer {
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        .form-control {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <div id='calendar'></div>
-    <div id='event-list'>
-        <h2>User Events</h2>
-        {% for event in events %}
-        {% if event.user == profile.user %}
-        <div class="event-item">
-            <strong>{{ event.title }}</strong><br>
-            <em>{{ event.description }}</em><br>
-            <span>{{ event.start }} - {{ event.end }}</span>
+    <div class="container">
+        <div id="eventFormContainer">
+            <h2 class="text-center">Create New Event</h2>
+            <form id="eventForm" action="{% url 'add_event' %}" method="post">
+                {% csrf_token %}
+                <input type="text" id="title" name="title" class="form-control" placeholder="Event Title" required>
+                <input type="datetime-local" id="start_time" name="start_time" class="form-control" required>
+                <input type="datetime-local" id="end_time" name="end_time" class="form-control" required>
+                <button type="submit" class="btn btn-primary btn-block">Add Event</button>
+            </form>
         </div>
-        {% endif %}
-        {% endfor %}
-        <div id='events'></div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var eventsEl = document.getElementById('events');
-            var userId = {{ user.id }};  // Assuming you have a user object available in your template context
+        <div id='calendar'></div>
+        <div id='event-list'>
+            <h2 class="text-center">User Events</h2>
+            {% for event in events %}
+            {% if event.user == profile.user %}
+            <div class="event-item">
+                <strong>{{ event.title }}</strong><br>
+                <em>{{ event.description }}</em><br>
+                <span>{{ event.start }} - {{ event.end }}</span>
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div id='events'></div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var calendarEl = document.getElementById('calendar');
+                var eventsEl = document.getElementById('events');
+                var userId = {{ user.id }};  // Assuming you have a user object available in your template context
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
-                },
-                events: function (fetchInfo, successCallback, failureCallback) {
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay,listYear'
+                    },
+                    events: function (fetchInfo, successCallback, failureCallback) {
+                        $.ajax({
+                            url: '{% url "event-list" user_id %}',  // Ensure the URL is correct
+                            data: { user_id: userId },  // Pass the user ID to the backend
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log("Fetched events:", data);  // Log the data for debugging
+                                // Ensure the data format matches FullCalendar's expected format
+                                const events = data.map(event => ({
+                                    title: event.title,
+                                    start: event.start,  // Ensure this is in ISO8601 string format
+                                    end: event.end,      // Ensure this is in ISO8601 string format
+                                    description: event.description,  // Optional, if you have additional fields
+                                    // Add any other fields you need
+                                }));
+                                successCallback(events);
+
+                                // Display events in the event list
+                                eventsEl.innerHTML = '';
+                                events.forEach(event => {
+                                    const eventItem = document.createElement('div');
+                                    eventItem.classList.add('event-item');
+                                    eventItem.innerHTML = `
+                                        <strong>${event.title}</strong><br>
+                                        <em>${event.description || ''}</em><br>
+                                        <span>${new Date(event.start).toLocaleString()} - ${event.end ? new Date(event.end).toLocaleString() : ''}</span>
+                                    `;
+                                    eventsEl.appendChild(eventItem);
+                                });
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.error("Error fetching events:", textStatus, errorThrown);  // Log any errors
+                                failureCallback();
+                            }
+                        });
+                    },
+                    eventDidMount: function (info) {
+                        // Add custom properties to the event element
+                        var tooltip = document.createElement('div');
+                        tooltip.classList.add('custom-event');
+                        tooltip.innerHTML = info.event.title;
+                        
+                    },
+                });
+
+                calendar.render();
+
+                $('#eventForm').submit(function (e) {
+                    e.preventDefault();
+                    var eventData = {
+                        title: $('#title').val(),
+
+                        start: $('#start_time').val(),
+                        end: $('#end_time').val(),
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val()
+                    };
                     $.ajax({
-                        url: '{% url "event-list" user_id %}',  // Ensure the URL is correct
-                        data: { user_id: userId },  // Pass the user ID to the backend
-                        dataType: 'json',
+                        url: '{% url "add_event" %}',  // Use Django template tag to get the correct URL
+                        method: 'POST',
+                        data: JSON.stringify(eventData),  // Ensure data is sent as JSON
+                        contentType: 'application/json',  // Set content type to JSON
                         success: function (data) {
-                            console.log("Fetched events:", data);  // Log the data for debugging
-                            // Ensure the data format matches FullCalendar's expected format
-                            const events = data.map(event => ({
-                                title: event.title,
-                                start: event.start,  // Ensure this is in ISO8601 string format
-                                end: event.end,      // Ensure this is in ISO8601 string format
-                                description: event.description,  // Optional, if you have additional fields
-                                // Add any other fields you need
-                            }));
-                            successCallback(events);
-
-                            // Display events in the event list
-                            eventsEl.innerHTML = '';
-                            events.forEach(event => {
-                                const eventItem = document.createElement('div');
-                                eventItem.classList.add('event-item');
-                                eventItem.innerHTML = `
-                                    <strong>${event.title}</strong><br>
-                                    <em>${event.description || ''}</em><br>
-                                    <span>${new Date(event.start).toLocaleString()} - ${event.end ? new Date(event.end).toLocaleString() : ''}</span>
-                                `;
-                                eventsEl.appendChild(eventItem);
-                            });
+                            calendar.addEvent(data.event);
+                            $('#eventForm')[0].reset();
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            console.error("Error fetching events:", textStatus, errorThrown);  // Log any errors
-                            failureCallback();
+                            alert('Failed to create event: ' + textStatus);
                         }
                     });
-                },
-                eventDidMount: function (info) {
-                    // Add custom properties to the event element
-                    var tooltip = document.createElement('div');
-                    tooltip.classList.add('custom-event');
-                    tooltip.innerHTML = `
-                        <strong>${info.event.title}</strong><br>
-                        <em>${info.event.extendedProps.description || ''}</em><br>
-                        <span>${info.event.start.toLocaleString()} - ${info.event.end ? info.event.end.toLocaleString() : ''}</span>
-                    `;
-                    info.el.appendChild(tooltip);
-                },
+                });
             });
-
-            calendar.render();
-        });
-    </script>
+        </script>
+    </div>
 </body>
 
 </html>

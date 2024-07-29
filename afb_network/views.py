@@ -13,6 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.contrib import messages
+import json
 
 
 @login_required
@@ -25,19 +26,23 @@ def profile_page(request):
     announcements = Announcement.objects.all()
     reminders = Reminder.objects.all()
     groups = Group.objects.all()
+    timecard= TimeEntry.objects.all()
+    events= Event.objects.all()
     context = {
         'departments': departments,
         'profiles': profiles,
         'announcements': announcements,
         'reminders': reminders,
         'groups': groups,
+        'timecard': timecard,
+        'events': events
     }
     return render(request, 'profile_list.html', context)
 
 def talk(request, user_id):
-    # Assuming you have a UserProfile model linked to your User model
+    
     user_profile = get_object_or_404(EmployeeProfile, user__id=user_id)
-    # Implement your logic here
+    
     return HttpResponse("Talk page for: " + user_profile.user.username)
 
 def user_calendar(request, user_id):
@@ -46,11 +51,6 @@ def user_calendar(request, user_id):
     context = {'events': user_events, 'user_id': user_id}
     return render(request, 'calendar.html', context)
 
-def user_timecard(request, user_id):
-    employee = get_object_or_404(EmployeeProfile, user__id=user_id)
-    time_entries = TimeEntry.objects.filter(employee=employee)
-    context = {'time_entries': time_entries}
-    return render(request, 'timecard.html', context)
 
 @receiver(post_save, sender=User)
 def create_user_calendar(sender, instance, created, **kwargs):
@@ -64,21 +64,29 @@ def fetch_events(request):
     return JsonResponse(event_list, safe=False)
 
 @login_required
+@csrf_exempt
 def add_event(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        start = request.POST.get('start')
-        end = request.POST.get('end')
-        if not (title and start and end):
-            return JsonResponse({'error': 'Missing title, start, or end'}, status=400)
-        event = Event(user=request.user, title=title, start_time=start, end_time=end)
         try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'errors': 'Invalid JSON data'}, status=400)
+
+        form = EventForm(data)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.user = request.user
             event.save()
-            return JsonResponse({'id': event.id}, status=200)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+            event_data = {
+                'id': event.id,
+                'title': event.title,
+                'start': event.start_time.isoformat(),
+                'end': event.end_time.isoformat(),
+            }
+            return JsonResponse({'status': 'success', 'event': event_data})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+    return JsonResponse({'status': 'invalid request'}, status=400)
 
 @login_required
 def event_list(request, user_id):
@@ -95,42 +103,59 @@ def event_list(request, user_id):
     except EmployeeProfile.DoesNotExist:
         return JsonResponse({'error': 'Employee profile not found'}, status=404)
 
-def create_event(request, user_id):
-    employee = get_object_or_404(EmployeeProfile, user__id=user_id)
+
+@login_required
+@csrf_exempt
+def add_event(request):
     if request.method == 'POST':
-        form = EventForm(request.POST)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'errors': 'Invalid JSON data'}, status=400)
+
+        form = EventForm(data)
         if form.is_valid():
             event = form.save(commit=False)
-            event.employee = employee
+            event.user = request.user
             event.save()
-            return redirect('user_calendar', user_id=user_id)
-    else:
-        form = EventForm()
-    context = {'form': form, 'user_id': user_id}
-    return render(request, 'calendar.html', context)
-    
+            event_data = {
+                'id': event.id,
+                'title': event.title,
+                'start': event.start_time.isoformat(),
+                'end': event.end_time.isoformat(),
+            }
+            return JsonResponse({'status': 'success', 'event': event_data})
+        else:
+            return JsonResponse({'status': 'error', 'errors': form.errors})
+    return JsonResponse({'status': 'invalid request'}, status=400)
+
+def user_timecard(request, user_id):
+    employee = get_object_or_404(EmployeeProfile, user__id=user_id)
+    time_entries = TimeEntry.objects.filter(employee=employee)
+    context = {'time_entries': time_entries}
+    return render(request, 'timecard.html', context)
+  
 @login_required
 def timecard(request):
+    user = request.user
     if request.method == 'POST':
         form = TimeCardForm(request.POST)
         if form.is_valid():
             timecard = form.save(commit=False)
-            timecard.user = request.user
+            timecard.user = user
             timecard.save()
             messages.success(request, 'Timecard submitted successfully.')
             return redirect('timecard_entry')
     else:
         form = TimeCardForm()
-    
-    # Fetch all timecards
-    all_timecards = TimeEntry.objects.all()
-    # Fetch only the logged-in user's timecards
-    user_timecards = TimeEntry.objects.filter(user=request.user)
-    
+
+    employee = get_object_or_404(EmployeeProfile, user=user)
+    time_entries = TimeEntry.objects.filter(employee=employee)
+    context = {'time_entries': time_entries}
+
     return render(request, 'timecard.html', {
         'form': form,
-        'user_timecards': user_timecards,
-        'all_timecards': all_timecards
+        'user_timecards': time_entries
     })
 
 
@@ -143,10 +168,17 @@ def edit_timecard(request, timecard_id):
         if form.is_valid():
             form.save()
             messages.success(request, 'Timecard updated successfully.')
-            return redirect('timecard')
+            return redirect('timecard_entry')
     else:
         form = TimeCardForm(instance=timecard)
     
     return render(request, 'edit_timecard.html', {'form': form, 'timecard': timecard})
 
 
+def profile_list(request):
+    users = User.objects.all()
+    user_timecards = {}
+    for user in users:
+        last_timecard = TimeEntry.objects.filter(user=user).order_by('-date').first()
+        user_timecards[user.id] = last_timecard
+    return render(request, 'profile_list.html', {'users': users, 'user_timecards': user_timecards})
