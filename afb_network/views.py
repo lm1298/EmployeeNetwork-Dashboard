@@ -142,7 +142,7 @@ def timecard(request):
         form = TimeCardForm(request.POST)
         if form.is_valid():
             timecard = form.save(commit=False)
-            timecard.user = user
+            timecard.user = User.objects.get(id=request.POST.get('user_id'))
             timecard.save()
             messages.success(request, 'Timecard submitted successfully.')
             return redirect('timecard_entry')
@@ -151,11 +151,13 @@ def timecard(request):
 
     employee = get_object_or_404(EmployeeProfile, user=user)
     time_entries = TimeEntry.objects.filter(employee=employee)
+    users = User.objects.all()
     context = {'time_entries': time_entries}
 
     return render(request, 'timecard.html', {
         'form': form,
-        'user_timecards': time_entries
+        'user_timecards': time_entries,
+        'users': users
     })
 
 

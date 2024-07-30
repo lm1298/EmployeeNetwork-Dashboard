@@ -20,12 +20,10 @@
       </p>
     </div>
     <button type="submit" class="btn btn-outline-info px-3">Login</button>
-    <button class="btn btn-outline-info">
-      <a class="px-3" href="{% provider_login_url 'google'%}?next=/">
-          <i class="fab fa-google"></i>
-          Login with Google
-      </a>
-    </button>
+    <a class="btn btn-outline-info px-3" href="{% provider_login_url 'google' %}?next=/">
+        <i class="fab fa-google"></i>
+        Login with Google
+    </a>
   </form>
 
 {% endblock %}

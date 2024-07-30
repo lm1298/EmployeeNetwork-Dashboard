@@ -20,6 +20,15 @@
     <header class="d-flex align-items-center justify-content-between bg-info text-white p-2">
         <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo">
         <div class="title">AFB Network</div>
+        <nav>
+            <ul>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="/admin/">Admin</a></li>
+                <li><a href="{% url 'timecard_entry' %}">Timecard</a></li>
+                <li><a href="{% url 'user_calendar' user_id=request.user.id %}">Calendar</a></li>
+            </ul>
+        </nav>
+        
     </header>
 
     <!-- Announcement Wall -->

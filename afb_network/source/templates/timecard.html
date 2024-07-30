@@ -14,8 +14,21 @@
             margin-top: 50px;
         }
 
+        .form-group {
+            margin-bottom: 15px;
+        }
         .form-group label {
+            display: block;
+            margin-bottom: 5px;
             font-weight: bold;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
 
         .card {
@@ -45,66 +58,69 @@
 
 <body>
     <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <h2 class="text-center mb-4">Add hours to your time card</h2>
-                <form method="post" class="form-group">
-                    {% csrf_token %}
-                    {% for field in form %}
-                    <div class="form-group row">
-                        <label class="col-sm-4 col-form-label" for="id_{{ field.name }}">{{ field.label }}</label>
-                        <div class="col-sm-8">
-                            {{ field }}
-                            {% if field.help_text %}
-                            <small class="form-text text-muted">{{ field.help_text }}</small>
-                            {% endif %}
-                        </div>
+        <h2 class="text-center mb-4">Add hours to your time card</h2>
+        <form method="post" class="form-group">
+            <label for="user_id">Select User:</label>
+            <select name="user_id" id="user_id" required>
+                {% for employee in users %}
+                <option value="{{ user.id }}">{{ employee.username }}</option>
+                {% endfor %}
+            </select>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group row">
+                <label class="col-sm-4 col-form-label" for="id_{{ field.name }}">{{ field.label }}</label>
+                <div class="col-sm-8">
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            <div class="form-group row">
+                <div class="col-sm-8 offset-sm-4">
+                    <button type="submit" class="btn btn-primary btn-block">Save</button>
+                </div>
+            </div>
+            {% if messages %}
+            <div class="row mt-3 justify-content-center">
+                <div class="col-md-6">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
                     </div>
                     {% endfor %}
-                    <div class="form-group row">
-                        <div class="col-sm-8 offset-sm-4">
-                            <button type="submit" class="btn btn-primary btn-block">Save</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-        {% if messages %}
-        <div class="row mt-3 justify-content-center">
-            <div class="col-md-6">
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
                 </div>
-                {% endfor %}
             </div>
-        </div>
-        {% endif %}
-        <!-- Displaying User-Specific Time Cards -->
-        <div class="row mt-5">
-            <div class="col-md-12">
-                <h2 class="text-center">Your Previous Time Cards</h2>
-                <div class="row">
-                    {% for timecard in user_timecards %}
-                    <div class="col-md-6">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <p><strong>Date:</strong> {{ timecard.date }}</p>
-                                <p><strong>Hours Worked:</strong> {{ timecard.work_hours }}</p>
-                                <p><strong>Description:</strong> {{ timecard.description }}</p>
-                                <a href="{% url 'edit_timecard' timecard.id %}" class="btn btn-primary">Edit</a>
+            {% endif %}
+            <!-- Displaying User-Specific Time Cards -->
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <h2 class="text-center">Your Previous Time Cards</h2>
+                    <div class="row">
+                        {% for timecard in user_timecards %}
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <p><strong>Date:</strong> {{ timecard.date }}</p>
+                                    <p><strong>User:</strong> {{timecard.employee}}</p>
+                                    <p><strong>Hours Worked:</strong> {{ timecard.work_hours }}</p>
+                                    <p><strong>Description:</strong> {{ timecard.description }}</p>
+                                    <a href="{% url 'edit_timecard' timecard.id %}" class="btn btn-primary">Edit</a>
+                                </div>
                             </div>
                         </div>
+                        {% empty %}
+                        <div class="col-md-12">
+                            <p class="text-center">No time cards found.</p>
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="col-md-12">
-                        <p class="text-center">No time cards found.</p>
-                    </div>
-                    {% endfor %}
                 </div>
             </div>
-        </div>
     </div>
+
     <!-- Include Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
