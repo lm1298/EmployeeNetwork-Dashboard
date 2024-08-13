@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from afb_network.forms import EventForm, TimeCardForm
+from afb_network.forms import EventForm, TimeEntryForm
 from .models import Department, EmployeeProfile, Announcement, Reminder,  Event, Calendar, TimeEntry
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
@@ -28,6 +28,7 @@ def profile_page(request):
     groups = Group.objects.all()
     timecard= TimeEntry.objects.all()
     events= Event.objects.all()
+    total_hours= TimeEntry.total_working_hours(user=request.user)
     context = {
         'departments': departments,
         'profiles': profiles,
@@ -35,7 +36,8 @@ def profile_page(request):
         'reminders': reminders,
         'groups': groups,
         'timecard': timecard,
-        'events': events
+        'events': events,
+        'total_hours': total_hours
     }
     return render(request, 'profile_list.html', context)
 
@@ -129,36 +131,53 @@ def add_event(request):
             return JsonResponse({'status': 'error', 'errors': form.errors})
     return JsonResponse({'status': 'invalid request'}, status=400)
 
-def user_timecard(request, user_id):
-    employee = get_object_or_404(EmployeeProfile, user__id=user_id)
-    time_entries = TimeEntry.objects.filter(employee=employee)
-    context = {'time_entries': time_entries}
-    return render(request, 'timecard.html', context)
-  
 @login_required
-def timecard(request):
-    user = request.user
+def user_timecard(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    
     if request.method == 'POST':
-        form = TimeCardForm(request.POST)
+        form = TimeEntryForm(request.POST)
         if form.is_valid():
-            timecard = form.save(commit=False)
-            timecard.user = User.objects.get(id=request.POST.get('user_id'))
-            timecard.save()
+            time_entry = form.save(commit=False)
+            time_entry.user = user  # Assign the User instance
+            time_entry.save()
             messages.success(request, 'Timecard submitted successfully.')
-            return redirect('timecard_entry')
+            return redirect('user_timecard', user_id=user_id)
     else:
-        form = TimeCardForm()
+        form = TimeEntryForm()
 
-    employee = get_object_or_404(EmployeeProfile, user=user)
-    time_entries = TimeEntry.objects.filter(employee=employee)
+    employee = get_object_or_404(EmployeeProfile, user=user )
+    time_entries = TimeEntry.objects.filter(employee=employee).order_by('-date')
+    total_hours = sum(entry.hours_to_minutes for entry in time_entries) / 60
     users = User.objects.all()
-    context = {'time_entries': time_entries}
 
-    return render(request, 'timecard.html', {
-        'form': form,
-        'user_timecards': time_entries,
-        'users': users
-    })
+    context = {
+        'time_entries': time_entries,
+        'total_hours': total_hours,
+        'user_id': user_id,
+        'form': form, 
+        'user': user
+
+    }
+    return render(request, 'timecard.html', context)
+
+
+@login_required
+def add_time_entry(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    employee = get_object_or_404(EmployeeProfile, user=user)
+    
+    if request.method == 'POST':
+        form = TimeEntryForm(request.POST)
+        if form.is_valid():
+            time_entry = form.save(commit=False)
+            time_entry.user = user  # Assign the User instance
+            time_entry.save()
+            messages.success(request, 'Timecard submitted successfully.')
+            return redirect('add_time_entry', user_id=user_id)
+    else:
+        form = TimeEntryForm()
+    return render(request, 'timecard.html', {'form': form, 'user': employee})
 
 
 @login_required
@@ -166,13 +185,13 @@ def edit_timecard(request, timecard_id):
     timecard = get_object_or_404(TimeEntry, id=timecard_id, user=request.user)
     
     if request.method == 'POST':
-        form = TimeCardForm(request.POST, instance=timecard)
+        form = TimeEntryForm(request.POST, instance=timecard)
         if form.is_valid():
             form.save()
             messages.success(request, 'Timecard updated successfully.')
-            return redirect('timecard_entry')
+            return redirect('user_timecard', user_id=request.user.id)  # Pass user_id instead of user
     else:
-        form = TimeCardForm(instance=timecard)
+        form = TimeEntryForm(instance=timecard)
     
     return render(request, 'edit_timecard.html', {'form': form, 'timecard': timecard})
 

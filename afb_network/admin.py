@@ -7,6 +7,8 @@ from .models import  Announcement, Department, EmployeeProfile, Reminder, Calend
 class EmployeeProfileAdmin(admin.ModelAdmin):
     form = EmployeeProfileForm
 
+class AnnouncementAdmin(admin.ModelAdmin):
+    list_display = ('title', 'content', 'video')
 
 admin.site.register(Event)
 admin.site.register(EmployeeProfile)

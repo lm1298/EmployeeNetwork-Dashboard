@@ -1,5 +1,5 @@
 from django import forms
-from .models import EmployeeProfile,TimeEntry, Event
+from .models import EmployeeProfile, Event, TimeEntry
 
 class EmployeeProfileForm(forms.ModelForm):
     class Meta:
@@ -15,10 +15,10 @@ class EmployeeProfileForm(forms.ModelForm):
         else:
             return None
         
-class TimeCardForm(forms.ModelForm):
+class TimeEntryForm(forms.ModelForm):
     class Meta:
         model = TimeEntry
-        fields = ['date', 'work_hours', 'work_minutes']
+        fields = ['work_hours', 'work_minutes', 'summary', 'date', 'vacation']
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

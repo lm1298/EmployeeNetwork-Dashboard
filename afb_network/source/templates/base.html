@@ -35,7 +35,7 @@
             <ul>
                 <li><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="/admin/">Admin</a></li>
-                <li><a href="{% url 'timecard_entry' %}">Timecard</a></li>
+                <li><a href="{% url 'user_timecard' user_id=request.user.id %}">Timecard</a></li>
                 <li><a href="{% url 'user_calendar' user_id=request.user.id %}">Calendar</a></li>
             </ul>
         </nav>

@@ -5,6 +5,11 @@ from django.utils.timezone import now
 
 class Department(models.Model):
     name = models.CharField(max_length=100)
+    manager = models.CharField(max_length=100, blank=True, null=True)
+    coordinator = models.CharField(max_length=100, blank=True, null=True)
+    dept_chat = models.URLField(max_length=200, blank=True, null=True)
+    task = models.TextField(blank=True, null=True)
+    dept_email = models.EmailField(max_length=100, blank=True, null=True)
     description = models.TextField()
     key_documents = models.FileField(upload_to='department_documents/', blank=True, null=True)  # Changed to FileField
     goals= models.FileField(upload_to='department_goals/', blank=True, null=True)  # Changed to FileField
@@ -29,6 +34,8 @@ class Announcement(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
     date = models.DateField()
+    video = models.FileField(upload_to='videos/', blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -55,36 +62,23 @@ class Calendar(models.Model):
     events = models.ManyToManyField(Event, related_name='calendar_events', blank=True)
     
 class TimeEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
     work_hours = models.PositiveIntegerField(default=0)
     work_minutes = models.PositiveIntegerField(default=0)
-    summary = models.TextField(max_length=255, blank = True)
-    date = models.DateTimeField(default=now)
-    employee = models.ForeignKey(EmployeeProfile, on_delete=models.CASCADE,blank=True, null=True)
-    # month = models.SmallIntegerField(default=1)
-    # week = models.SmallIntegerField(default=0)
-    # converted_to_minutes = models.PositiveIntegerField(default=0)
+    summary = models.TextField(max_length=255, blank=True, null=True)
+    date = models.DateTimeField(default=now) 
+    vacation = models.BooleanField(default=False)  # Field to specify absence
+    employee = models.ForeignKey(EmployeeProfile, on_delete=models.CASCADE, related_name='time_entries', blank=True, null=True)
 
-    @property
-    def month(self):
-        return self.date.strftime('%m')
-    
-    @property
-    def week(self):
-        return self.date.strftime('%W')
-    
-    @property
-    def year(self):
-        return self.date.strftime('%Y')
-    
     @property
     def hours_to_minutes(self):
-        return self.work_hours*60 + self.work_minutes
+        return self.work_hours * 60 + self.work_minutes
 
     def __str__(self):
-        return  self.user.first_name + ' ' + self.user.last_name  + "'s entry on " + str(self.date.date())
+        return f"{self.user.username}'s entry on {self.date.date()}"
 
-
-
-
-
+    @staticmethod
+    def total_working_hours(user):
+        time_entries = TimeEntry.objects.filter(user=user, vacation=False)
+        total_minutes = sum(entry.hours_to_minutes for entry in time_entries)
+        return total_minutes / 60  # Convert minutes to hours

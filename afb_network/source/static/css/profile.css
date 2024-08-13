@@ -38,6 +38,7 @@ header>div.title {
     font-size: 24px;
     font-weight: bold;
 }
+
 nav ul {
     list-style: none;
     padding: 0;
@@ -45,9 +46,11 @@ nav ul {
     display: flex;
     justify-content: space-around;
 }
+
 nav ul li {
     margin: 0 25px;
 }
+
 nav ul li a {
     text-decoration: none;
     font-size: 24px;
@@ -55,9 +58,11 @@ nav ul li a {
     font-weight: bolder;
     color: white;
 }
+
 nav ul li a:hover {
     color: white;
 }
+
 section {
     width: 100%;
     margin: 0;
@@ -68,7 +73,14 @@ section {
     margin-bottom: 20px;
 }
 
-.announcements,
+.announcements {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
 .reminder-container {
     display: flex;
     flex-direction: column;
@@ -107,9 +119,43 @@ section {
     margin-top: 40px;
 }
 
-.announcement-text p {
+.announcement-item p {
     margin: 0;
     color: black;
+
+}
+
+.announcement-item {
+    flex: 0 0 auto;
+    width: 800px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.announcement-item h3 {
+    margin-top: 0;
+}
+
+.announcement-item video {
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.info-box {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
 }
 
 footer {

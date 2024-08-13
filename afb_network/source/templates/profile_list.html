@@ -24,21 +24,29 @@
             <ul>
                 <li><a href="{% url 'login' %}">Login</a></li>
                 <li><a href="/admin/">Admin</a></li>
-                <li><a href="{% url 'timecard_entry' %}">Timecard</a></li>
+                <li><a href="{% url 'user_timecard' user_id=request.user.id %}">Timecard</a></li>
                 <li><a href="{% url 'user_calendar' user_id=request.user.id %}">Calendar</a></li>
             </ul>
         </nav>
-        
+
     </header>
 
     <!-- Announcement Wall -->
     <section id="announcement" class="container my-4">
         <h2 class="text-dark">Announcement Wall</h2>
+        
         <div class="announcements">
             {% for announcement in announcements %}
-            <div class="announcement bg-white border rounded p-2 mb-2">
-                <div class="announcement-text">
-                    <p>{{ announcement.title }} - {{ announcement.date }}</p>
+            <div class="announcement bg-white border rounded p-2 mb-2"> 
+                <div class="announcement-item">
+                    {% if announcement.video %}
+                    <p><strong>{{ announcement.title }} , {{ announcement.date }}</strong></p>
+                    <video width="600" controls>
+                        <source src="{{ announcement.video.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p>Video Added by: {{ announcement.user }}</p>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -63,24 +71,28 @@
         <div class="department-section row">
             <div class="department-bubble col-12 col-md-3 text-center p-3 {{ department.name|lower }}">
                 <h3>{{ department.name }}</h3>
+
             </div>
             <div class="department-content col-12 col-md-9">
                 <div class="department-details bg-light border rounded p-3 mb-3">
                     <p>{{ department.name }}</p>
+                    <div class="info-grid">
+                        <div class="info-box">
+                            <p><strong>Manager:</strong> {{ department.manager }}</p>
+                        </div>
+                        <div class="info-box">
+                            <p><strong>Coordinator:</strong> {{ department.coordinator }}</p>
+                        </div>
+                        <div class="info-box">
+                            <p><strong>Email:</strong> {{ department.dept_email }}</p>
+                        </div>
+                    </div>
                     <h4>Focus of the Month: {{ department.focus_of_the_month }} Volunteer page design</h4>
                     <!-- Inside the loop for each department -->
                     <div id='departmentCalendar-{{ department.name|lower }}' class="department-calendar my-2"></div>
-
-                    <div class="document-fields">
-                        <div class="section">
-                            <i class="fas fa-file-alt"></i>
-                            {% if department.key_documents %}
-                            <a href="{{ department.key_documents.url }}" target="_blank">Key Documents</a>
-                            {% else %}
-                            Key Documents
-                            {% endif %}
-                        </div>
-                        <div class="section">
+                    <h4>Key Documents</h4>
+                    <div class="info-grid">
+                        <div class="info-box">
                             <i class="fas fa-file-alt"></i>
                             {% if department.goals %}
                             <a href="{{ department.goals.url }}" target="_blank">Department Goals 2024</a>
@@ -88,7 +100,7 @@
                             Department Goals 2024
                             {% endif %}
                         </div>
-                        <div class="section">
+                        <div class="info-box">
                             <i class="fas fa-file-alt"></i>
                             {% if department.faqs %}
                             <a href="{{ department.faqs.url }}" target="_blank">FAQ's Pages</a>
@@ -96,7 +108,7 @@
                             FAQ's Pages
                             {% endif %}
                         </div>
-                        <div class="section">
+                        <div class="info-box">
                             <i class="fas fa-file-alt"></i>
                             {% if department.curriculum %}
                             <a href="{{ department.curriculum.url }}" target="_blank">A Free Bird Curriculum</a>
@@ -119,16 +131,15 @@
                             {% else %}
                             <img src="{% static 'images/default.png' %}" alt="Profile Image" class="profile-image">
                             {% endif %}
-                            
+
 
                         </div>
-
-
                         <div class="user-details-hover bg-white border rounded p-2 mt-2">
                             <p>Start Date: {{ profile.start_date }}</p>
                             <p>End Date: {{ profile.end_date }}</p>
                             <p>Email: {{ profile.user.email }}</p>
-                            
+                            <p>Total Hours: {{ total_hours }}</p>
+
                             <!-- Added options for Talk, Calendar, and Time Card -->
 
                         </div>
@@ -147,11 +158,9 @@
                                         class="btn btn-primary">Calendar</a>
                                 </div>
                                 <div class="employee-option">
-                                    {% if user.timecard_set.exists %}
-                                    <a href="{% url 'user_timecard' profile.user.id %}">Timecard</a>
-                                    {% else %}
-                                    <a href="{% url 'timecard_entry'  %}">Timecard</a>
-                                    {% endif %}
+
+                                    <a href="{% url 'user_timecard' user.id %}">Timecard</a>
+
                                 </div>
                             </div>
                         </div>

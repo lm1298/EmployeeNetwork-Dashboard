@@ -12,10 +12,10 @@ urlpatterns = [
     path('', views.profile_page, name='profile'),
     path('talk/<int:user_id>/', views.talk, name='talk_url_name'),
     path('calendar/<int:user_id>/', views.user_calendar, name='user_calendar'),
-    path('timecard/<int:user_id>/', views.user_timecard, name='user_timecards'),
     path('calendar/add/', views.add_event, name='add_event'),
     path('events/<int:user_id>', views.event_list, name='event-list'),
-    path('timecard/', views.timecard, name='timecard_entry'),
+    path('timecard/<int:user_id>/', views.user_timecard, name='user_timecard'),
+    #path('timecard/<int:user_id>/add/', views.add_time_entry, name='add_time_entry'),
     path('edit/<int:timecard_id>/', views.edit_timecard, name='edit_timecard'),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
