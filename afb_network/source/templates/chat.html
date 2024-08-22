@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat with {{ username }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            background:grey;;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .chat-log {
+            border-top: 1px solid #ccc;
+            height: 400px;
+            overflow-y: scroll;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+        .chat-log p {
+            margin: 10px 0;
+        }
+        .chat-log p strong {
+            color: #00aeff;
+        }
+        .chat-form {
+            display: flex;
+            border-top: 1px solid #ccc;
+            padding: 10px;
+            background: #fff;
+        }
+        .chat-form input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .chat-form button {
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .chat-form button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Chat with {{ username }}</h1>
+        </div>
+        <div class="chat-log" id="chat-log">
+            {% for message in messages %}
+                <p><strong>{{ message.sender.username }}:</strong> {{ message.message }}</p>
+            {% endfor %}
+        </div>
+        <form method="post" class="chat-form">
+            {% csrf_token %}
+            <input id="chat-message-input" type="text" name="message" placeholder="Type your message here...">
+            <button id="chat-message-submit" type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock %}

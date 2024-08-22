@@ -17,5 +17,6 @@ urlpatterns = [
     path('timecard/<int:user_id>/', views.user_timecard, name='user_timecard'),
     #path('timecard/<int:user_id>/add/', views.add_time_entry, name='add_time_entry'),
     path('edit/<int:timecard_id>/', views.edit_timecard, name='edit_timecard'),
+   
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 

@@ -2,7 +2,7 @@
 from django.contrib import admin
 
 from .forms import EmployeeProfileForm
-from .models import  Announcement, Department, EmployeeProfile, Reminder, Calendar, Event, TimeEntry
+from .models import  Announcement, Department, EmployeeProfile, Reminder, Calendar, Event, TimeEntry, ChatMessage
 
 class EmployeeProfileAdmin(admin.ModelAdmin):
     form = EmployeeProfileForm
@@ -17,5 +17,6 @@ admin.site.register(Reminder)
 admin.site.register(Department)  # Register the Department model
 admin.site.register(TimeEntry)
 admin.site.register(Calendar)
+admin.site.register(ChatMessage)
 
 

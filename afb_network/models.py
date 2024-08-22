@@ -82,3 +82,12 @@ class TimeEntry(models.Model):
         time_entries = TimeEntry.objects.filter(user=user, vacation=False)
         total_minutes = sum(entry.hours_to_minutes for entry in time_entries)
         return total_minutes / 60  # Convert minutes to hours
+    
+class ChatMessage(models.Model):
+    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(User, related_name='received_messages', on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.sender} to {self.receiver}: {self.message}'

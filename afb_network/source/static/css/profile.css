@@ -142,8 +142,9 @@ section {
 
 .announcement-item video {
     width: 100%;
-    height: auto;
-    margin-top: 10px;
+    height: 500px;
+    object-fit: cover;
+    object-fit: cover;
 }
 
 .info-grid {
@@ -310,6 +311,7 @@ footer {
     flex-wrap: wrap;
     gap: 20px;
     justify-content: space-evenly;
+
 }
 
 .user-profile {
@@ -319,6 +321,8 @@ footer {
     align-items: center;
     position: relative;
     flex: 0 1 calc(18% - 20px);
+    
+    
 }
 
 .employee-image {
