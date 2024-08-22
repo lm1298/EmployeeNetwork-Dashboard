@@ -47,9 +47,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    
-    
-    
+    'channels',
+     
 ]
 
 MIDDLEWARE = [
@@ -80,6 +79,17 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = 'afbnetwork.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 WSGI_APPLICATION = 'afbnetwork.wsgi.application'
 
