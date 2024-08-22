@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from afb_network.forms import EventForm, TimeEntryForm
-from .models import Department, EmployeeProfile, Announcement, Reminder,  Event, Calendar, TimeEntry
+from .models import ChatMessage, Department, EmployeeProfile, Announcement, Reminder,  Event, Calendar, TimeEntry
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -42,10 +42,30 @@ def profile_page(request):
     return render(request, 'profile_list.html', context)
 
 def talk(request, user_id):
-    
     user_profile = get_object_or_404(EmployeeProfile, user__id=user_id)
-    
-    return HttpResponse("Talk page for: " + user_profile.user.username)
+    username = user_profile.user.username
+
+    if request.method == 'POST':
+        message = request.POST.get('message')
+        if message:
+            ChatMessage.objects.create(
+                sender=request.user,
+                receiver=user_profile.user,
+                message=message
+            )
+
+    messages = ChatMessage.objects.filter(
+        sender=request.user, receiver=user_profile.user
+    ) | ChatMessage.objects.filter(
+        sender=user_profile.user, receiver=request.user
+    ).order_by('timestamp')
+
+    return render(request, 'chat.html', {
+        'username': username,
+        'messages': messages
+    })
+
+
 
 def user_calendar(request, user_id):
     employee = get_object_or_404(EmployeeProfile, user__id=user_id)

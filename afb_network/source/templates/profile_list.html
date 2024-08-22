@@ -34,10 +34,10 @@
     <!-- Announcement Wall -->
     <section id="announcement" class="container my-4">
         <h2 class="text-dark">Announcement Wall</h2>
-        
+
         <div class="announcements">
             {% for announcement in announcements %}
-            <div class="announcement bg-white border rounded p-2 mb-2"> 
+            <div class="announcement bg-white border rounded p-2 mb-2">
                 <div class="announcement-item">
                     {% if announcement.video %}
                     <p><strong>{{ announcement.title }} , {{ announcement.date }}</strong></p>
