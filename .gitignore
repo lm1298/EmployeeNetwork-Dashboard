@@ -8,5 +8,16 @@ afb_network/__pycache__/models.cpython-312.pyc
 afb_network/__pycache__/urls.cpython-312.pyc
 afb_network/__pycache__/views.cpython-312.pyc
 afbnetwork/__pycache__/settings.cpython-312.pyc
+afb_network/migrations/0014_alter_timeentry_summary_alter_timeentry_user.py
+afb_network/migrations/0014_delete_timeentry.py
+afb_network/migrations/0015_timeentry.py
+afb_network/migrations/0016_merge_20240731_1726.py
+afb_network/migrations/0017_alter_timeentry_user.py
+afb_network/migrations/0018_alter_timeentry_user.py
+afb_network/migrations/0019_timeentry_employee_alter_timeentry_user.py
+afb_network/migrations/0020_announcement_video.py
+afb_network/migrations/0021_department_coordinator_department_dept_chat_and_more.py
+afb_network/migrations/0022_announcement_user.py
+afb_network/migrations/0023_chatmessage.py
 db.sqlite3
 media
